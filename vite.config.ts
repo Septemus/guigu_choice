@@ -54,6 +54,14 @@ export default defineConfig(({ mode }) => {
         include: ["src/**/*.ts", "src/**/*.vue"],
       }),
     ],
+    css: {
+      /* CSS 预处理器 */
+      preprocessorOptions: {
+        scss: {
+          additionalData: '@import "src/assets/styles/var.scss";',
+        },
+      },
+    },
     base: "./",
     resolve: {
       alias: {
