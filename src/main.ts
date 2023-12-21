@@ -1,7 +1,23 @@
 import { createApp } from "vue";
 
-import "./style.css";
+import pinia from "@/ts/store";
 
-import App from "./App.vue";
+import "@/assets/styles/index.scss";
 
-createApp(App).mount("#app");
+import App from "@/App.vue";
+
+import "virtual:svg-icons-register";
+
+import gloablComponent from "@/components/index";
+
+import router from "@/ts/router";
+
+const app = createApp(App);
+
+app.use(router);
+
+app.use(gloablComponent);
+
+app.use(pinia);
+
+app.mount("#app");

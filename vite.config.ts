@@ -1,8 +1,11 @@
 import { defineConfig, loadEnv } from "vite";
+import { viteMockServe } from "vite-plugin-mock";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
+import Icons from "unplugin-icons/vite";
+import IconsResolver from "unplugin-icons/resolver";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import legacy from "@vitejs/plugin-legacy";
 import { createHtmlPlugin } from "vite-plugin-html";
@@ -12,20 +15,31 @@ import {
   ElementPlusResolve,
 } from "vite-plugin-style-import";
 
+import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
+
 const getTarget = (mode, target) => {
   return loadEnv(mode, process.cwd())[target];
 };
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   return {
     plugins: [
       vue(),
       AutoImport({
-        resolvers: [ElementPlusResolver()],
+        imports: ["vue"],
+        resolvers: [ElementPlusResolver(), IconsResolver()],
       }),
       Components({
-        resolvers: [ElementPlusResolver()],
+        resolvers: [
+          IconsResolver({
+            enabledCollections: ["ep"],
+          }),
+          ElementPlusResolver(),
+        ],
+      }),
+      Icons({
+        autoInstall: true,
       }),
       //按需导入组件样式
       createStyleImportPlugin({
@@ -53,6 +67,16 @@ export default defineConfig(({ mode }) => {
       eslintPlugin({
         include: ["src/**/*.ts", "src/**/*.vue"],
       }),
+      createSvgIconsPlugin({
+        // Specify the icon folder to be cached
+        iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
+        // Specify symbolId format
+        symbolId: "icon-[dir]-[name]",
+      }),
+      viteMockServe({
+        mockPath: "./src/mock",
+        localEnabled: command === "serve",
+      }),
     ],
     css: {
       /* CSS 预处理器 */
@@ -74,7 +98,7 @@ export default defineConfig(({ mode }) => {
       minify: "terser",
       terserOptions: {
         compress: {
-          drop_console: true,
+          drop_console: false,
           drop_debugger: true,
         },
       },
