@@ -101,12 +101,64 @@
           </el-icon>
         </div>
       </el-aside>
-      <el-main> </el-main>
+      <el-container>
+        <el-header>
+          <el-breadcrumb
+            :separator-icon="ArrowRight"
+            class="header-left"
+          >
+            <el-breadcrumb-item :to="{ path: '/' }">
+              homepage
+            </el-breadcrumb-item>
+            <el-breadcrumb-item>promotion management</el-breadcrumb-item>
+            <el-breadcrumb-item>promotion list</el-breadcrumb-item>
+            <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+          </el-breadcrumb>
+          <div class="header-right">
+            <el-button circle>
+              <el-icon>
+                <i-ep-refresh />
+              </el-icon>
+            </el-button>
+            <el-button circle>
+              <el-icon>
+                <i-ep-full-screen />
+              </el-icon>
+            </el-button>
+            <el-button circle>
+              <el-icon>
+                <i-ep-setting />
+              </el-icon>
+            </el-button>
+            <el-avatar>
+              <el-icon>
+                <i-ep-user-filled />
+              </el-icon>
+            </el-avatar>
+            <el-dropdown>
+              <span class="el-dropdown-link">
+                Dropdown List
+                <el-icon class="el-icon--right">
+                  <i-ep-arrow-down />
+                </el-icon>
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item>退出登录</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
+        </el-header>
+
+        <el-main>Main</el-main>
+      </el-container>
     </el-container>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { ArrowRight } from "@element-plus/icons-vue";
 import { ref } from "vue";
 let collapse = ref(false);
 </script>
@@ -114,7 +166,7 @@ let collapse = ref(false);
 <style lang="scss" scoped>
 .el-container {
   height: 100vh;
-
+  position: relative;
   .el-aside {
     // width: 260px;
     width: auto;
@@ -182,6 +234,43 @@ let collapse = ref(false);
         font-size: 25px;
       }
     }
+  }
+  .el-header {
+    position: fixed;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: calc(100% - 260px);
+    .header-right {
+      display: flex;
+      align-items: center;
+      > .el-avatar,
+      > .el-button {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+      }
+      > * {
+        margin-left: 12px;
+      }
+      .el-dropdown {
+        .el-dropdown-link {
+          cursor: pointer;
+          // color: var(--el-color-primary);
+          display: flex;
+          align-items: center;
+          &:focus-visible {
+            outline: none;
+            border: none;
+          }
+        }
+      }
+    }
+  }
+  .el-main {
+    position: absolute;
+    top: 50px;
   }
 }
 </style>
