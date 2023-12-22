@@ -15,5 +15,6 @@ module.exports = {
   rules: {
     // "declaration-empty-line-before":null
     "no-empty-source": null,
+    "selector-class-pattern":null
   },
 };
