@@ -20,4 +20,11 @@ app.use(gloablComponent);
 
 app.use(pinia);
 
+// app.directive("hide", {
+//   beforeUpdate: (el: HTMLElement, binding: { value: boolean }) => {
+//     el.style.visibility = binding.value ? "hidden" : "visible";
+//     // el.style.position = binding.value ? "absolute" : "relative";
+//   },
+// });
+
 app.mount("#app");
