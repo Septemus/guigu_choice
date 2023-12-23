@@ -110,7 +110,7 @@ export default defineConfig(({ mode, command }) => {
           manualChunks: {
             // vue vue-router合并打包
             "element-plus": ["element-plus"],
-            vue: ["vue", "vue-router"],
+            vue: ["vue", "vue-router", "pinia"],
           },
         },
       },

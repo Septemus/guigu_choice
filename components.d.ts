@@ -7,6 +7,12 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Aside: typeof import('./src/components/homepage/aside/index.vue')['default']
+    Attribute: typeof import('./src/components/homepage/product/attribute.vue')['default']
+    Authority: typeof import('./src/components/homepage/authority.vue')['default']
+    Brand: typeof import('./src/components/homepage/product/brand.vue')['default']
+    Character: typeof import('./src/components/homepage/authority/character.vue')['default']
+    copy: typeof import('./src/components/homepage/screen copy.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
@@ -28,6 +34,7 @@ declare module 'vue' {
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
+    Header: typeof import('./src/components/homepage/header/index.vue')['default']
     HomePage: typeof import('./src/components/HomePage.vue')['default']
     IEpArrowDown: typeof import('~icons/ep/arrow-down')['default']
     IEpCalendar: typeof import('~icons/ep/calendar')['default']
@@ -47,9 +54,14 @@ declare module 'vue' {
     IEpUser: typeof import('~icons/ep/user')['default']
     IEpUserFilled: typeof import('~icons/ep/user-filled')['default']
     LoginPage: typeof import('./src/components/LoginPage.vue')['default']
+    Menu: typeof import('./src/components/homepage/authority/menu.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Screen: typeof import('./src/components/homepage/screen/index.vue')['default']
+    Sku: typeof import('./src/components/homepage/product/sku.vue')['default']
+    Spu: typeof import('./src/components/homepage/product/spu.vue')['default']
     SvgIcon: typeof import('./src/components/SvgIcon.vue')['default']
-    Welcome: typeof import('./src/components/welcome.vue')['default']
+    Users: typeof import('./src/components/homepage/authority/users.vue')['default']
+    Welcome: typeof import('./src/components/homepage/welcome/index.vue')['default']
   }
 }

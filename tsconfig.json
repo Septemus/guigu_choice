@@ -25,6 +25,7 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noEmitOnError": true
+    // "noUnusedvar": false
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]
