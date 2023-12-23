@@ -58,7 +58,7 @@
 </template>
 <script lang="ts" setup>
 import { reactive } from "vue";
-import useUserStore from "@/ts/store/user";
+import useUserStore from "@/store/user";
 import { ElNotification } from "element-plus";
 import { useRouter } from "vue-router";
 // import { userInfoReponseData } from "@/api/user/type";

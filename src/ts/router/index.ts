@@ -2,9 +2,9 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import useUserStore from "@/ts/store/user";
 import pinia from "@/ts/store";
 const userStore = useUserStore(pinia);
-const homepage = () => import("@/components/HomePage.vue");
-const login = () => import("@/components/LoginPage.vue");
-
+const homepage = () => import("@/pages/HomePage.vue");
+const login = () => import("@/pages/LoginPage.vue");
+const welcome = () => import("@/components/welcome.vue");
 export default createRouter({
   history: createWebHashHistory(),
   routes: [
@@ -33,6 +33,16 @@ export default createRouter({
         }
       },
       component: homepage,
+      redirect: {
+        name: "welcome",
+      },
+      children: [
+        {
+          path: "welcome",
+          name: "welcome",
+          component: welcome,
+        },
+      ],
     },
     {
       path: "/login",

@@ -19,7 +19,9 @@
               <i-ep-home-filled />
             </el-icon>
             <template #title>
-              <span>首页</span>
+              <router-link :to="{ name: 'welcome' }">
+                <span>首页</span>
+              </router-link>
             </template>
           </el-menu-item>
           <el-menu-item index="2">
@@ -151,7 +153,9 @@
           </div>
         </el-header>
 
-        <el-main>Main</el-main>
+        <el-main>
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
   </div>
@@ -160,38 +164,43 @@
 <script lang="ts" setup>
 import { ArrowRight } from "@element-plus/icons-vue";
 import { ref } from "vue";
+// import welcome from "./welcome.vue";
 let collapse = ref(false);
 </script>
 
 <style lang="scss" scoped>
 .el-container {
-  height: 100vh;
   position: relative;
+  height: 100vh;
+
   .el-aside {
+    position: relative;
     // width: 260px;
     width: auto;
     height: 100%;
     padding: 10px 0;
-    background-color: $homeSideBgColor;
     overflow-x: hidden;
-    position: relative;
+    background-color: $homeSideBgColor;
+
     .logo {
-      padding: 0 20px;
+      position: relative;
       display: flex;
       align-items: center;
+      padding: 0 20px;
       color: white;
-      position: relative;
+
       img {
         width: 40px;
         height: 40px;
       }
 
       p {
-        display: block;
         // margin-left: 10px;
         position: absolute;
         left: 70px;
+        display: block;
         width: 400px;
+
         span {
           // top: 0;
           // left: 0;
@@ -205,10 +214,16 @@ let collapse = ref(false);
     .el-menu {
       background-color: inherit;
       border: none;
+
       .el-icon {
         width: 40px;
         height: 40px;
         margin-right: 10px;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
       }
     }
 
@@ -217,60 +232,112 @@ let collapse = ref(false);
     }
 
     .collapse-button {
-      cursor: pointer;
       position: absolute;
       top: 50%;
       left: 100%;
-      transform: translate(-50px, -50%);
-      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 50px;
       height: 100px;
-      background-color: rgb(33, 61, 91);
-      border-radius: 40px 0px 0px 40px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      color: white;
+      background-color: rgb(33 61 91);
+      border-radius: 40px 0 0 40px;
+      transform: translate(-50px, -50%);
+      cursor: pointer;
+
       i.el-icon {
         font-size: 25px;
       }
     }
   }
+
   .el-header {
     position: fixed;
-    height: 50px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: calc(100% - 260px);
+    height: 50px;
+
     .header-right {
       display: flex;
       align-items: center;
+
       > .el-avatar,
       > .el-button {
         width: 24px;
         height: 24px;
         font-size: 12px;
       }
+
       > * {
         margin-left: 12px;
       }
+
       .el-dropdown {
         .el-dropdown-link {
-          cursor: pointer;
           // color: var(--el-color-primary);
           display: flex;
           align-items: center;
+          cursor: pointer;
+
           &:focus-visible {
-            outline: none;
             border: none;
+            outline: none;
           }
         }
       }
     }
   }
+
   .el-main {
     position: absolute;
     top: 50px;
+    width: 100%;
+    height: calc(100vh - 50px);
+
+    // .box-card {
+    //   .box {
+    //     display: flex;
+
+    //     img {
+    //       width: 100px;
+    //       height: 100px;
+    //       border-radius: 100px;
+    //     }
+
+    //     .description {
+    //       margin-left: 20px;
+
+    //       h3 {
+    //         margin-bottom: 30px;
+    //         font-weight: 900;
+    //         font-size: 30px;
+    //         line-height: 1;
+    //       }
+
+    //       p {
+    //         color: skyblue;
+    //         font-style: italic;
+    //       }
+    //     }
+    //   }
+    // }
+
+    // .bottom {
+    //   width: 100%;
+    //   height: 300px;
+
+    //   .welcome {
+    //     display: block;
+    //     width: 100%;
+    //     height: 100%;
+    //     margin: 0 auto;
+    //   }
+
+    //   margin-top: 10px;
+    // }
   }
 }
 </style>
