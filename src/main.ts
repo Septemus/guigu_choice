@@ -12,6 +12,8 @@ import gloablComponent from "@/components/index";
 
 import router from "@/ts/router";
 
+import "nprogress/nprogress.css";
+
 const app = createApp(App);
 
 app.use(router);
@@ -19,12 +21,5 @@ app.use(router);
 app.use(gloablComponent);
 
 app.use(pinia);
-
-// app.directive("hide", {
-//   beforeUpdate: (el: HTMLElement, binding: { value: boolean }) => {
-//     el.style.visibility = binding.value ? "hidden" : "visible";
-//     // el.style.position = binding.value ? "absolute" : "relative";
-//   },
-// });
 
 app.mount("#app");

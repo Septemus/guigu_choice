@@ -24,6 +24,7 @@ const getTarget = (mode, target) => {
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
   return {
+    publicPath: "https://gitee.com/jch1011/guiguzhenxuan",
     plugins: [
       vue(),
       AutoImport({
@@ -86,7 +87,7 @@ export default defineConfig(({ mode, command }) => {
         },
       },
     },
-    base: "./",
+    // base: "./",
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
@@ -119,7 +120,7 @@ export default defineConfig(({ mode, command }) => {
       host: "0.0.0.0", // ip
       port: 8080, // 端口号
       open: false, // 是否自动在浏览器打开
-      // 跨域代理配置
+      // // 跨域代理配置
     },
   };
 });

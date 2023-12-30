@@ -16,12 +16,18 @@
       </el-breadcrumb-item>
     </el-breadcrumb>
     <div class="header-right">
-      <el-button circle>
+      <el-button
+        circle
+        @click="refresh"
+      >
         <el-icon>
           <i-ep-refresh />
         </el-icon>
       </el-button>
-      <el-button circle>
+      <el-button
+        circle
+        @click="goFullScreen"
+      >
         <el-icon>
           <i-ep-full-screen />
         </el-icon>
@@ -45,7 +51,7 @@
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item>退出登录</el-dropdown-item>
+            <el-dropdown-item @click="quit">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -54,11 +60,34 @@
 </template>
 
 <script lang="ts" setup>
-import { useRoute } from "vue-router";
-import { computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { computed, nextTick } from "vue";
 import useUserStore from "@/ts/store/user";
+import useLayoutStore from "@/ts/store/layout";
+import screenfull from "screenfull";
+function goFullScreen() {
+  if (screenfull.isEnabled) {
+    screenfull.toggle();
+  }
+}
 const userStore = useUserStore();
+const layoutStore = useLayoutStore();
+const router = useRouter();
 const route = computed(() => useRoute());
+function quit() {
+  userStore.$reset();
+  localStorage.removeItem("token");
+  router.push({
+    name: "login",
+  });
+}
+function refresh() {
+  console.log(`clicked refresh!@@`);
+  layoutStore.refsh = true;
+  nextTick(() => {
+    layoutStore.refsh = false;
+  });
+}
 </script>
 <style lang="scss" scoped>
 .el-header {

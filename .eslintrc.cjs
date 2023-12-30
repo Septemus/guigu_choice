@@ -37,9 +37,9 @@ module.exports = {
   },
   rules: {
     "no-var": "error",
-    "no-unused-vars": "error",
+    "no-unused-vars": "off",
     "no-console": "off",
-    "no-debugger": "off",
+    "no-debugger": "error",
     "@typescript-eslint/no-unused-vars": [
       "error",
       { varsIgnorePattern: ".*", args: "none" },

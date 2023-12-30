@@ -15,7 +15,7 @@
       <template v-for="(item, index) of routes">
         <router-link
           v-if="!item.children"
-          :key="item.name + 'nochild'"
+          :key="(item.name as string) + 'nochild'"
           :to="{ name: item.name }"
         >
           <el-menu-item :index="item.name">
@@ -71,10 +71,12 @@
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
-import homepage from "@/ts/router/route/homepage";
 import { useRoute } from "vue-router";
+import useUserstore from "@/ts/store/user";
 const curRoute = useRoute();
-const routes = homepage.children;
+const userStore = useUserstore();
+// debugger;
+const routes = userStore.menuRoutes;
 const collapse = ref(false);
 </script>
 <style lang="scss" scoped>
