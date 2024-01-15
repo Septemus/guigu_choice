@@ -27,10 +27,11 @@ ret.beforeEach(async (to: any) => {
         if (verified) {
           return { name: "homepage" };
         } else {
-          return to;
+          return true;
         }
       } else {
         if (verified) {
+          debugger;
           return to;
         } else {
           return { name: "login" };

@@ -97,6 +97,7 @@
               type="primary"
               size="small"
               icon="User"
+              @click="setRole(row)"
               >分配角色</el-button
             >
             <el-button
@@ -188,33 +189,50 @@
       </template>
     </el-drawer>
     <!-- 抽屉结构:用户某一个已有的账号进行职位分配 -->
-    <el-drawer>
+    <el-drawer v-model="drawer1">
       <template #header>
         <h4>分配角色(职位)</h4>
       </template>
       <template #default>
         <el-form>
           <el-form-item label="用户姓名">
-            <el-input :disabled="true"></el-input>
+            <el-input
+              v-model="userParams.username"
+              :disabled="true"
+            ></el-input>
           </el-form-item>
           <el-form-item label="职位列表">
-            <el-checkbox>全选</el-checkbox>
+            <el-checkbox
+              v-model="checkAll"
+              :indeterminate="isIndeterminate"
+              @change="handleCheckAllChange"
+            >
+              全选
+            </el-checkbox>
             <!-- 显示职位的的复选框 -->
-            <el-checkbox-group>
+            <el-checkbox-group
+              v-model="userRole"
+              @change="handleCheckedCitiesChange"
+            >
               <el-checkbox
                 v-for="(role, index) in allRole"
                 :key="index"
                 :label="role"
-                >{{ role.roleName }}</el-checkbox
               >
+                {{ role.roleName }}
+              </el-checkbox>
             </el-checkbox-group>
           </el-form-item>
         </el-form>
       </template>
       <template #footer>
         <div style="flex: auto">
-          <el-button>取消</el-button>
-          <el-button type="primary">确定</el-button>
+          <el-button @click="drawer1 = false">取消</el-button>
+          <el-button
+            type="primary"
+            @click="confirmClick"
+            >确定</el-button
+          >
         </div>
       </template>
     </el-drawer>
@@ -222,8 +240,20 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref, reactive, nextTick } from "vue";
-import { Records, UserResponseData, User } from "@/api/authority/user/type";
-import { reqUserInfo, reqAddOrUpdateUser } from "@/api/authority/user";
+import {
+  Records,
+  UserResponseData,
+  User,
+  AllRole,
+  SetRoleData,
+  AllRoleResponseData,
+} from "@/api/authority/user/type";
+import {
+  reqUserInfo,
+  reqAddOrUpdateUser,
+  reqSetUserRole,
+  reqAllRole,
+} from "@/api/authority/user";
 import { ElMessage } from "element-plus";
 
 onMounted(() => {
@@ -247,7 +277,32 @@ let userParams = reactive<User>({
 
 let drawer = ref<boolean>(false);
 
+let drawer1 = ref<boolean>(false);
+
+const checkAll = ref<boolean>(false);
+
+const isIndeterminate = ref<boolean>(true);
+
 let formRef = ref<unknown>();
+
+let userRole = ref<AllRole>([]);
+
+let allRole = ref<AllRole>([]);
+
+const handleCheckAllChange = (val: boolean) => {
+  //val:true(全选)|false(没有全选)
+  userRole.value = val ? allRole.value : [];
+  //不确定的样式(确定样式)
+  isIndeterminate.value = false;
+};
+
+const handleCheckedCitiesChange = (value: string[]) => {
+  //顶部复选框的勾选数据
+  //代表:勾选上的项目个数与全部的职位个数相等，顶部的复选框勾选上
+  checkAll.value = value.length === allRole.value.length;
+  //不确定的样式
+  isIndeterminate.value = value.length !== allRole.value.length;
+};
 
 //校验用户名字回调函数
 const validatorUsername = (rule: any, value: string, callBack: any) => {
@@ -324,6 +379,21 @@ const addUser = () => {
     );
   });
 };
+
+const setRole = async (row: User) => {
+  //存储已有的用户信息
+  Object.assign(userParams, row);
+  //获取全部的职位的数据与当前用户已有的职位的数据
+  let result: AllRoleResponseData = await reqAllRole(userParams.id as number);
+  if (result.code == 200) {
+    //存储全部的职位
+    allRole.value = result.data.allRolesList;
+    //存储当前用户已有的职位
+    userRole.value = result.data.assignRoles;
+    //抽屉显示出来
+    drawer1.value = true;
+  }
+};
 const cancel = () => {
   //关闭抽屉
   drawer.value = false;
@@ -354,6 +424,25 @@ const save = async () => {
       type: "error",
       message: userParams.id ? "更新失败" : "添加失败",
     });
+  }
+};
+const confirmClick = async () => {
+  //收集参数
+  let data: SetRoleData = {
+    userId: userParams.id as number,
+    roleIdList: userRole.value.map((item) => {
+      return item.id as number;
+    }),
+  };
+  //分配用户的职位
+  let result: any = await reqSetUserRole(data);
+  if (result.code == 200) {
+    //提示信息
+    ElMessage({ type: "success", message: "分配职务成功" });
+    //关闭抽屉
+    drawer1.value = false;
+    //获取更新完毕用户的信息,更新完毕留在当前页
+    getHasUser(pageNo.value);
   }
 };
 </script>

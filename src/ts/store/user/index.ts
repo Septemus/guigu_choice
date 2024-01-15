@@ -52,6 +52,7 @@ export default defineStore("user", () => {
     // token.value = getToken();
     return reqUserInfo().then((res: userInfoReponseData) => {
       if (res.ok) {
+        debugger;
         updInfo(res.data);
         // debugger;
         const userAsyncRoute = filterAsyncRoute(
