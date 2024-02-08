@@ -73,6 +73,7 @@ export default defineStore("user", () => {
         });
         router.addRoute(anyRoute[0]);
         //目前路由器管理的只有常量路由:用户计算完毕异步路由、任意路由动态追加
+        console.log(`this is the router:@@${router}`);
       }
       return res.ok;
     });

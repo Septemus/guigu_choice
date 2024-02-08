@@ -61,7 +61,7 @@
 
 <script lang="ts" setup>
 import { useRoute, useRouter } from "vue-router";
-import { computed, nextTick } from "vue";
+import { computed } from "vue";
 import useUserStore from "@/ts/store/user";
 import useLayoutStore from "@/ts/store/layout";
 import screenfull from "screenfull";
@@ -81,13 +81,7 @@ function quit() {
     name: "login",
   });
 }
-function refresh() {
-  console.log(`clicked refresh!@@`);
-  layoutStore.refsh = true;
-  nextTick(() => {
-    layoutStore.refsh = false;
-  });
-}
+const { refresh } = layoutStore;
 </script>
 <style lang="scss" scoped>
 .el-header {

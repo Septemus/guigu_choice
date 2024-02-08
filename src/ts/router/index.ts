@@ -19,6 +19,7 @@ ret.beforeEach(async (to: any) => {
   //from:你从来个路由而来
   //next:路由的放行函数
   nprogress.start();
+  debugger;
   console.log(`router guard encountered!@@`);
   try {
     if (!userStore.realUserInfo.name) {

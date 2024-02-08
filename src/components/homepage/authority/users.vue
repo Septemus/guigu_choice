@@ -15,11 +15,14 @@
           <el-button
             type="primary"
             size="default"
+            :disabled="keyword ? false : true"
+            @click="search"
             >搜索</el-button
           >
           <el-button
             type="primary"
             size="default"
+            @click="refresh"
             >重置</el-button
           >
         </el-form-item>
@@ -35,13 +38,16 @@
       <el-button
         type="primary"
         size="default"
+        :disabled="selectIdArr.length ? false : true"
+        @click="deleteSelectUser"
         >批量删除</el-button
       >
       <!-- table展示用户信息 -->
       <el-table
         style="margin: 10px 0"
-        border
         :data="userArr"
+        border
+        @selection-change="selectChange"
       >
         <el-table-column
           type="selection"
@@ -104,11 +110,13 @@
               type="primary"
               size="small"
               icon="Edit"
+              @click="updateUser(row)"
               >编辑</el-button
             >
             <el-popconfirm
               :title="`你确定要删除${row.username}?`"
               width="260px"
+              @confirm="deleteUser(row.id)"
             >
               <template #reference>
                 <el-button
@@ -253,9 +261,11 @@ import {
   reqAddOrUpdateUser,
   reqSetUserRole,
   reqAllRole,
+  reqRemoveUser,
+  reqSelectUser,
 } from "@/api/authority/user";
 import { ElMessage } from "element-plus";
-
+import layoutStore from "@/ts/store/layout";
 onMounted(() => {
   getHasUser();
 });
@@ -283,11 +293,13 @@ const checkAll = ref<boolean>(false);
 
 const isIndeterminate = ref<boolean>(true);
 
-let formRef = ref<unknown>();
+let formRef = ref<any>();
 
 let userRole = ref<AllRole>([]);
 
 let allRole = ref<AllRole>([]);
+
+let selectIdArr = ref<User[]>([]);
 
 const handleCheckAllChange = (val: boolean) => {
   //val:true(全选)|false(没有全选)
@@ -356,6 +368,14 @@ const getHasUser = async (pager = 1) => {
     userArr.value = result.data.records;
   }
 };
+
+const search = () => {
+  //根据关键字获取相应的用户数据
+  getHasUser();
+  //清空关键字
+  keyword.value = "";
+};
+
 const addUser = () => {
   //抽屉显示出来
   drawer.value = true;
@@ -378,6 +398,43 @@ const addUser = () => {
       "password"
     );
   });
+};
+
+const updateUser = (row: User) => {
+  //抽屉显示出来
+  drawer.value = true;
+  //存储收集已有的账号信息
+  Object.assign(userParams, row);
+  //清除上一次的错误的提示信息
+  nextTick(() => {
+    formRef.value.clearValidate("username");
+    formRef.value.clearValidate("name");
+  });
+};
+
+const deleteUser = async (userId: number) => {
+  let result: any = await reqRemoveUser(userId);
+  if (result.code == 200) {
+    ElMessage({ type: "success", message: "删除成功" });
+    getHasUser(userArr.value.length > 1 ? pageNo.value : pageNo.value - 1);
+  }
+};
+
+const selectChange = (value: any) => {
+  selectIdArr.value = value;
+};
+
+const deleteSelectUser = async () => {
+  //整理批量删除的参数
+  let idsList: any = selectIdArr.value.map((item) => {
+    return item.id;
+  });
+  //批量删除的请求
+  let result: any = await reqSelectUser(idsList);
+  if (result.code == 200) {
+    ElMessage({ type: "success", message: "删除成功" });
+    getHasUser(userArr.value.length > 1 ? pageNo.value : pageNo.value - 1);
+  }
 };
 
 const setRole = async (row: User) => {
@@ -445,6 +502,7 @@ const confirmClick = async () => {
     getHasUser(pageNo.value);
   }
 };
+const { refresh } = layoutStore();
 </script>
 
 <style lang="scss" scoped>
