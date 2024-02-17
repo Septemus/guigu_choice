@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import type { RoleResponseData } from "./type";
+import type { RoleResponseData, MenuResponseData, RoleData } from "./type";
 //枚举地址
 const API = {
   //获取全部的职位接口
@@ -19,3 +19,17 @@ export const reqAllRoleList = (page: number, limit: number, roleName: string) =>
   request.get<any, RoleResponseData>(
     API.ALLROLE_URL + `${page}/${limit}/?roleName=${roleName}`
   );
+
+//获取全部菜单与按钮权限数据
+export const reqAllMenuList = (roleId: number) =>
+  request.get<any, MenuResponseData>(API.ALLPERMISSTION + roleId);
+
+export const reqAddOrUpdateRole = (data: RoleData) => {
+  if (data.id) {
+    return request.put<any, any>(API.UPDATEROLE_URL, data);
+  } else {
+    return request.post<any, any>(API.ADDROLE_URL, data);
+  }
+};
+export const reqRemoveRole = (roleId: number) =>
+  request.delete<any, any>(API.REMOVEROLE_URL + roleId);

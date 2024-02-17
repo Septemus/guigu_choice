@@ -34,6 +34,7 @@
         type="primary"
         size="default"
         icon="Plus"
+        @click="addRole"
       >
         添加职位
       </el-button>
@@ -80,6 +81,7 @@
               type="primary"
               size="small"
               icon="User"
+              @click="setPermisstion(row)"
             >
               分配权限
             </el-button>
@@ -87,12 +89,14 @@
               type="primary"
               size="small"
               icon="Edit"
+              @click="updateRole(row)"
             >
               编辑
             </el-button>
             <el-popconfirm
               :title="`你确定要删除${row.roleName}?`"
               width="260px"
+              @confirm="removeRole(row.id)"
             >
               <template #reference>
                 <el-button
@@ -117,30 +121,38 @@
         @current-change="getHasRole"
       />
     </el-card>
-    <el-dialog>
+    <el-dialog
+      v-model="dialogVisite"
+      :title="RoleParams.id ? '更新职位' : '添加职位'"
+    >
       <el-form ref="form">
         <el-form-item
           label="职位名称"
           prop="roleName"
         >
-          <el-input placeholder="请你输入职位名称"></el-input>
+          <el-input
+            v-model="RoleParams.roleName"
+            placeholder="请你输入职位名称"
+          ></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
         <el-button
           type="primary"
           size="default"
+          @click="dialogVisite = false"
         >
           取消
         </el-button>
         <el-button
           type="primary"
           size="default"
+          @click="save"
           >确定</el-button
         >
       </template>
     </el-dialog>
-    <el-drawer>
+    <el-drawer v-model="drawer">
       <template #header>
         <h4>分配菜单与按钮的权限</h4>
       </template>
@@ -149,6 +161,9 @@
           ref="tree"
           show-checkbox
           node-key="id"
+          :data="menuArr"
+          :default-checked-keys="selectArr"
+          :props="defaultProps"
           default-expand-all
         />
       </template>
@@ -162,15 +177,39 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
-import { reqAllRoleList } from "@/api/authority/character";
-import type { RoleResponseData, Records } from "@/api/authority/character/type";
+import { ref, onMounted, reactive, nextTick } from "vue";
+import {
+  reqAllRoleList,
+  reqAllMenuList,
+  reqAddOrUpdateRole,
+  reqRemoveRole,
+} from "@/api/authority/character";
+import type {
+  RoleResponseData,
+  Records,
+  RoleData,
+  MenuResponseData,
+  MenuList,
+} from "@/api/authority/character/type";
+import { ElMessage } from "element-plus";
 import useLayoutStore from "@/ts/store/layout";
 let keyword = ref<string>("");
 let pageNo = ref<number>(1);
 let pageSize = ref<number>(10);
 let total = ref<number>(0);
 let allRole = ref<Records>([]);
+let drawer = ref<boolean>(false);
+let menuArr = ref<MenuList>([]);
+let selectArr = ref<number[]>([]);
+let dialogVisite = ref<boolean>(false);
+let form = ref<any>();
+const defaultProps = {
+  children: "children",
+  label: "name",
+};
+let RoleParams = reactive<RoleData>({
+  roleName: "",
+});
 const layoutStore = useLayoutStore();
 
 const getHasRole = async (pager = 1) => {
@@ -199,5 +238,79 @@ onMounted(() => {
   //获取职位请求
   getHasRole();
 });
+
+const setPermisstion = async (row: RoleData) => {
+  //抽屉显示出来
+  drawer.value = true;
+  //收集当前要分类权限的职位的数据
+  Object.assign(RoleParams, row);
+  //根据职位获取权限的数据
+  let result: MenuResponseData = await reqAllMenuList(RoleParams.id as number);
+  if (result.code == 200) {
+    menuArr.value = result.data;
+    console.log(`this is menuarr:@@`, menuArr.value);
+
+    selectArr.value = filterSelectArr(menuArr.value, []);
+  }
+};
+const filterSelectArr = (allData: MenuList, initArr: any[]) => {
+  allData.forEach((item) => {
+    if (item.select && item.level == 4) {
+      initArr.push(item.id);
+    }
+    if (item.children && item.children.length > 0) {
+      filterSelectArr(item.children, initArr);
+    }
+  });
+  return initArr;
+};
+const addRole = () => {
+  //对话框显示出来
+  dialogVisite.value = true;
+  //清空数据
+  Object.assign(RoleParams, {
+    roleName: "",
+    id: 0,
+  });
+  //清空上一次表单校验错误结果
+  nextTick(() => {
+    form.value.clearValidate("roleName");
+  });
+};
+const save = async () => {
+  //表单校验结果,结果通过在发请求、结果没有通过不应该在发生请求
+  await form.value.validate();
+  //添加职位|更新职位的请求
+  let result: any = await reqAddOrUpdateRole(RoleParams);
+  if (result.code == 200) {
+    //提示文字
+    ElMessage({
+      type: "success",
+      message: RoleParams.id ? "更新成功" : "添加成功",
+    });
+    //对话框显示
+    dialogVisite.value = false;
+    //再次获取全部的已有的职位
+    getHasRole(RoleParams.id ? pageNo.value : 1);
+  }
+};
+const updateRole = (row: RoleData) => {
+  //显示出对话框
+  dialogVisite.value = true;
+  //存储已有的职位----带有ID的
+  Object.assign(RoleParams, row);
+  //清空上一次表单校验错误结果
+  nextTick(() => {
+    form.value.clearValidate("roleName");
+  });
+};
+const removeRole = async (id: number) => {
+  let result: any = await reqRemoveRole(id);
+  if (result.code == 200) {
+    //提示信息
+    ElMessage({ type: "success", message: "删除成功" });
+    getHasRole(allRole.value.length > 1 ? pageNo.value : pageNo.value - 1);
+  }
+};
 </script>
 <style lang="scss" scoped></style>
