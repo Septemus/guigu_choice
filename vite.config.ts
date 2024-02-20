@@ -14,7 +14,7 @@ import {
   createStyleImportPlugin,
   ElementPlusResolve,
 } from "vite-plugin-style-import";
-
+import vitePluginRequireTransform from "vite-plugin-require-transform";
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 
 const getTarget = (mode, target) => {
@@ -24,7 +24,7 @@ const getTarget = (mode, target) => {
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
   return {
-    publicPath: "https://gitee.com/jch1011/guiguzhenxuan",
+    base: "./",
     plugins: [
       vue(),
       AutoImport({
@@ -78,6 +78,9 @@ export default defineConfig(({ mode, command }) => {
         mockPath: "./src/mock",
         localEnabled: command === "serve",
       }),
+      vitePluginRequireTransform({
+        fileRegex: /.ts$|.vue$/,
+      }),
     ],
     css: {
       /* CSS 预处理器 */
@@ -96,10 +99,11 @@ export default defineConfig(({ mode, command }) => {
     build: {
       outDir: "dist", //指定打包输出路径
       assetsDir: "static", //指定静态资源存放路径
+      // target: "es2015",
       minify: "terser",
       terserOptions: {
         compress: {
-          drop_console: false,
+          drop_console: true,
           drop_debugger: true,
         },
       },

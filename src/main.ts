@@ -14,11 +14,15 @@ import router from "@/ts/router";
 
 import "nprogress/nprogress.css";
 
+import { isHasButton } from "@/directives/has";
+
 const app = createApp(App);
 
 app.use(router);
 
 app.use(gloablComponent);
+
+isHasButton(app);
 
 app.use(pinia);
 

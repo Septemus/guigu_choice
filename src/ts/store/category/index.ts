@@ -2,7 +2,7 @@
 import { defineStore } from "pinia";
 import { reqC1, reqC2, reqC3 } from "@/api/product/attr";
 import type { CategoryResponseData } from "@/api/product/attr/type";
-import type { CategoryState } from "./types/type";
+import type { CategoryState } from "./type";
 const useCategoryStore = defineStore("Category", {
   state: (): CategoryState => {
     return {

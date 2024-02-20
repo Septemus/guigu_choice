@@ -72,7 +72,7 @@ function Login() {
   console.log(`logging!@@`);
   userStore
     .login(loginInfo)
-    .then((res): Promise<null> => {
+    .then((res): Promise<any> => {
       if (res.ok) {
         console.log("登陆成功！@@", res);
         ElNotification({
@@ -87,7 +87,8 @@ function Login() {
         return Promise.reject(res.message);
       }
     })
-    .then(() => {
+    .then((res: any) => {
+      res = null;
       router.push({
         name: "homepage",
       });
@@ -105,10 +106,10 @@ function Login() {
 <style lang="scss" scoped>
 .body {
   position: relative;
-  width: 100%;
   height: 100%;
-  background-image: url("@/assets/images/background.jpg");
   background-size: cover;
+  background-image: url("@/assets/images/background.jpg");
+  width: 100%;
 
   .el-row {
     position: absolute;

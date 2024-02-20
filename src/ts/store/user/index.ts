@@ -37,6 +37,7 @@ function filterAsyncRoute(asnycRoute: any, routes: any) {
 export default defineStore("user", () => {
   // const token: Ref<string | null> = ref(getToken());
   const realUserInfo: userInfoData = reactive(initVal);
+  const buttons: Ref<string[]> = ref([]);
   type body = {
     path: string;
     name: string;
@@ -50,33 +51,38 @@ export default defineStore("user", () => {
   }
   function info(): Promise<boolean> {
     // token.value = getToken();
-    return reqUserInfo().then((res: userInfoReponseData) => {
-      if (res.ok) {
-        debugger;
-        updInfo(res.data);
-        // debugger;
-        const userAsyncRoute = filterAsyncRoute(
-          cloneDeep(asyncRoute),
-          res.data.routes
-        );
-        menuRoutes.value = constantRoute[0].children.concat(userAsyncRoute);
-        // [...userAsyncRoute].forEach((route: any) => {
-        //   router.removeRoute("homepage");
-        // });
-        router.removeRoute("homepage");
-        router.addRoute({
-          ...constantRoute[0],
-          children: [
-            ...constantRoute[0].children,
-            ...(menuRoutes.value as RouteRecordRaw[]),
-          ],
-        });
-        router.addRoute(anyRoute[0]);
-        //目前路由器管理的只有常量路由:用户计算完毕异步路由、任意路由动态追加
-        console.log(`this is the router:@@${router}`);
+    return reqUserInfo().then(
+      (res: userInfoReponseData): boolean | Promise<never> => {
+        try {
+          if (res.ok) {
+            updInfo(res.data);
+            const userAsyncRoute = filterAsyncRoute(
+              cloneDeep(asyncRoute),
+              res.data.routes
+            );
+            menuRoutes.value = constantRoute[0].children.concat(userAsyncRoute);
+            buttons.value = res.data.buttons;
+            // [...userAsyncRoute].forEach((route: any) => {
+            //   router.removeRoute("homepage");
+            // });
+            router.removeRoute("homepage");
+            router.addRoute({
+              ...constantRoute[0],
+              children: [
+                ...constantRoute[0].children,
+                ...(menuRoutes.value as RouteRecordRaw[]),
+              ],
+            });
+            router.addRoute(anyRoute[0]);
+            //目前路由器管理的只有常量路由:用户计算完毕异步路由、任意路由动态追加
+            console.log(`this is the router:@@${router}`);
+          }
+          return res.ok;
+        } catch (err) {
+          return Promise.reject(err);
+        }
       }
-      return res.ok;
-    });
+    );
   }
   function updInfo(res: userInfoData): void {
     Object.keys(realUserInfo).forEach((key: string) => {
@@ -88,5 +94,5 @@ export default defineStore("user", () => {
       realUserInfo[key] = initVal[key];
     });
   }
-  return { realUserInfo, login, info, $reset, menuRoutes };
+  return { buttons, realUserInfo, login, info, $reset, menuRoutes };
 });

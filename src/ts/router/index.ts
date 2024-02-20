@@ -1,11 +1,11 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import routes from "@/ts/router/route";
 import nprogress from "nprogress";
 import useUserStore from "@/ts/store/user";
 import pinia from "@/ts/store";
 const userStore = useUserStore(pinia);
 const ret = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
   scrollBehavior() {
     return {
@@ -22,6 +22,7 @@ ret.beforeEach(async (to: any) => {
   debugger;
   console.log(`router guard encountered!@@`);
   try {
+    if (to.name === "404") return true;
     if (!userStore.realUserInfo.name) {
       const verified = await userStore.info();
       if (to.name === "login") {

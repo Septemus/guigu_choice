@@ -44,8 +44,8 @@ watch(
 
 <style lang="scss" scoped>
 .el-container {
-  position: relative;
   height: 100vh;
+  position: relative;
 
   .el-main {
     position: absolute;
