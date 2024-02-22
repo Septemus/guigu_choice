@@ -1,11 +1,11 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import routes from "@/ts/router/route";
 import nprogress from "nprogress";
 import useUserStore from "@/ts/store/user";
 import pinia from "@/ts/store";
 const userStore = useUserStore(pinia);
 const ret = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
   scrollBehavior() {
     return {
